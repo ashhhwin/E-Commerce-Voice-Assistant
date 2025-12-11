@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+
+# Environments
+.env
+*.env
+
+# Cache files
+.cache/
+*.db
+*.sqlite
+*.sqlite3
+
+
+# Data
+data/index/
+data/processed/*.csv
+data/raw/
