@@ -18,8 +18,8 @@ class ModelInterface:
     Unified interface for interacting with language model providers.
     
     Configuration via environment variables:
-    - LLM_PROVIDER: anthropic|local|google
-    - LLM_MODEL: specific model identifier
+    - LLM_PROVIDER: anthropic|local|google|ollama
+    - LLM_MODEL: specific model identifier (e.g., llama3.2)
     - LLM_API_KEY: authentication key
     - LLM_TEMPERATURE: sampling temperature (default: 0.3)
     - LLM_BASE_URL: base URL for local providers
@@ -50,6 +50,15 @@ class ModelInterface:
                 except ImportError:
                     raise ImportError("Anthropic SDK not installed. Run: pip install anthropic")
             
+            elif self.provider == "ollama":
+                # Ollama uses the OpenAI SDK format
+                from openai import OpenAI
+                # Default Ollama URL is localhost:11434. The /v1 is required for compatibility.
+                endpoint_url = os.getenv("LLM_BASE_URL", "http://localhost:11434/v1")
+                # Ollama does not require a real API key, but the SDK requires a non-empty string
+                self.client = OpenAI(api_key="ollama", base_url=endpoint_url)
+                logger.info(f"Initialized Ollama provider at: {endpoint_url} with model: {self.model_name}")
+
             elif self.provider == "local":
                 from openai import OpenAI
                 endpoint_url = os.getenv("LLM_BASE_URL", "http://localhost:8000/v1")
@@ -158,7 +167,7 @@ class ModelInterface:
                 return self._generate_google(messages, temp, token_limit)
             elif self.provider == "anthropic":
                 return self._generate_anthropic(messages, temp, token_limit)
-            elif self.provider == "local":
+            elif self.provider == "local" or self.provider == "ollama":
                 return self._generate_local(messages, temp, token_limit, response_format)
             else:
                 raise NotImplementedError(f"Generation not supported for: {self.provider}")
@@ -245,7 +254,7 @@ class ModelInterface:
         token_limit: int,
         response_format: Optional[Dict[str, str]]
     ) -> str:
-        """Generate response using local model server."""
+        """Generate response using local model server (or Ollama)."""
         request_params = {
             "model": self.model_name,
             "messages": messages,
@@ -260,7 +269,7 @@ class ModelInterface:
             result = self.client.chat.completions.create(**request_params)
             return result.choices[0].message.content
         except Exception as e:
-            logger.error(f"Local model server error: {str(e)}")
+            logger.error(f"Local/Ollama server error: {str(e)}")
             raise
 
 
@@ -295,6 +304,10 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     
     try:
+        # Example: Set ENV vars programmatically for testing, or rely on .env
+        # os.environ["LLM_PROVIDER"] = "ollama"
+        # os.environ["LLM_MODEL"] = "llama3.2"
+        
         interface = get_llm_client()
         logger.info(f"Model interface ready - Provider: {interface.provider}")
         

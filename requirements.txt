@@ -5,33 +5,46 @@ httpx==0.27.2
 pydantic==2.9.2
 python-dotenv==1.0.1
 streamlit==1.40.1
+gradio>=5.0.0  # Added: Required for your UI
+
+# CRITICAL STABILITY PINS (The "Golden Set")
+# These prevent the "NumPy 2.0" binary incompatibility crashes
+numpy<2.0
+scipy==1.12.0
+scikit-learn==1.4.2
 
 # LangGraph & Agents
 langgraph==0.2.37
 langchain-core==0.3.15
 
-# Vector Store & Embeddings
+# Vector Store & AI Models
 chromadb==0.5.11
 sentence-transformers==3.2.1
+transformers>=4.42.0  # Added: Required for advanced RAG/embedding loading
+huggingface-hub>=0.24.0
+ollama
+
+# Machine Learning Backend (Required for Whisper & Transformers)
+torch
+torchvision
+torchaudio
 
 # LLM Providers
-#openai==1.54.3
-# anthropic==0.39.0  
-google-generativeai==0.3.0  
+google-generativeai==0.3.0
+# openai==1.54.3 # Uncomment if needed
+# anthropic==0.39.0 # Uncomment if needed
 
-# Text Processing
+# Text Processing & Data
 rapidfuzz==3.9.7
 pandas==2.2.2
-
-# ASR (Whisper)
-openai-whisper==20240930
-# Requires ffmpeg: brew install ffmpeg (macOS) or apt-get install ffmpeg (Linux)
-
-# Data Formats
 pyarrow==17.0.0
+pillow  # Added: Fixed the "ImportError: cannot import name Image"
 
-# Web Search
-# brave-search-python==1.0.0  # If using Brave SDK (optional)
+# Audio / ASR
+openai-whisper==20240930
+# TTS (If using Coqui TTS, uncomment below. Warning: It is strict on versions)
+# TTS
 
 # Utilities
 tqdm==4.66.1
+aiofiles # Added: Required by Gradio

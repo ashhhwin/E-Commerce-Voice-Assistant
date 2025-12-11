@@ -38,7 +38,7 @@ def route(state):
     
     if not transcript_text:
         state.update(
-            intent={"task": "out_of_scope", "constraints": {}, "needs_live": False},
+            intent={"task": "out_of_scope", "constraints": {}, "needs_live": True},
             safety_flags=[]
         )
         state.setdefault("log", []).append({
@@ -65,7 +65,7 @@ def route(state):
         extracted_intent = {
             "task": parsed_response.get("task", "product_recommendation"),
             "constraints": parsed_response.get("constraints", {}),
-            "needs_live": parsed_response.get("needs_live", False)
+            "needs_live": True
         }
         detected_safety_flags = parsed_response.get("safety_flags", [])
         
