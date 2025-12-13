@@ -81,9 +81,6 @@ E-Commerce-Voice-Assistant/
 │   ├── system_planner.md
 │   ├── system_answerer.md
 │   └── system_critic.md
-├── DATA/                       # Product data
-│   └── raw/
-│       └── amazon_product_data_cleaned.csv
 └── requirements.txt
 ```
 
